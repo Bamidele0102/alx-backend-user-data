@@ -34,7 +34,7 @@ def get_logger() -> logging.Logger:
 
 def get_db() -> connection.MySQLConnection:
     """
-    Connect to mysql server with environmental vars
+    Connect to mysql server with environmental vars: Task 3
     """
     username = environ.get("PERSONAL_DATA_DB_USERNAME", "root")
     password = environ.get("PERSONAL_DATA_DB_PASSWORD", "")
@@ -71,7 +71,7 @@ class RedactingFormatter(logging.Formatter):
 def main() -> None:
     """
     Obtain a database connection using get_db
-    and retrieve all rows in the users table and display each row
+    and retrieve all rows in the users table and display each row: Task 3
     """
     db = get_db()
     cur = db.cursor()
