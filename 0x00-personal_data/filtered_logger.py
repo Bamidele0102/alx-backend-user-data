@@ -71,7 +71,7 @@ class RedactingFormatter(logging.Formatter):
 def main() -> None:
     """
     Obtain a database connection using get_db
-    and retrieve all rows in the users table and display each row: Task 3
+    and retrieve all rows in the users table and display each row: Task 4
     """
     db = get_db()
     cur = db.cursor()
