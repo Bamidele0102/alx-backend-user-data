@@ -36,7 +36,7 @@ class BasicAuth(Auth):
 
     def extract_user_credentials(
             self, decoded_base64_authorization_header: str) -> Tuple[str, str]:
-        """Returns user email and pswd from decoded Base64. Task 9"""
+        """Returns user email and pswd from decoded Base64."""
         if decoded_base64_authorization_header is None:
             return None, None
         if not isinstance(decoded_base64_authorization_header, str):
@@ -46,31 +46,37 @@ class BasicAuth(Auth):
         email, pwd = decoded_base64_authorization_header.split(':', 1)
         return (email, pwd)
 
-    def user_object_from_credentials(self,
-                                     user_email: str,
+    def user_object_from_credentials(self, user_email: str,
                                      user_pwd: str) -> User:
-        """Returns User instance based on email and pswd. Task 10"""
+        """
+        Return a User instance based on email and password. Task 10
+        """
         if user_email is None or not isinstance(user_email, str):
             return None
         if user_pwd is None or not isinstance(user_pwd, str):
             return None
         try:
-            users = User.search({'email': user_email})
+            users = User.search({"email": user_email})
+            if not users or users == []:
+                return None
+            for u in users:
+                if u.is_valid_password(user_pwd):
+                    return u
+            return None
         except Exception:
             return None
-        for user in users:
-            if user.is_valid_password(user_pwd):
-                return user
-            return None
 
-    def current_user(self, request=None) -> User:
-        """Overrides Auth and retrieves User instance for request. Task 11"""
-
-        # Retrieve auth header from the request.
-        auth_header = self.authorization_header(request)
-
-        # Decode auth header value.
-        b64_header = self.extract_base64_authorization_header(auth_header)
-        decoded_header = self.decode_base64_authorization_header(b64_header)
-        user_creds = self.extract_user_credentials(decoded_header)
-        return self.user_object_from_credentials(*user_creds)
+def current_user(self, request=None) -> User:
+        """
+        Returns a User instance based on a received request. Task 11
+        """
+        Auth_header = self.authorization_header(request)
+        if Auth_header is not None:
+            token = self.extract_base64_authorization_header(Auth_header)
+            if token is not None:
+                decoded = self.decode_base64_authorization_header(token)
+                if decoded is not None:
+                    email, pword = self.extract_user_credentials(decoded)
+                    if email is not None:
+                        return self.user_object_from_credentials(email, pword)
+        return
