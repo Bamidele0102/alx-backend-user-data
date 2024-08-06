@@ -1,53 +1,67 @@
 #!/usr/bin/env python3
-"""Basic API authentication module."""
+"""
+Definition of class BasicAuth
+"""
+import base64
+from typing import Optional, Tuple
 
-from api.v1.auth.auth import Auth
-from base64 import b64decode
+from .auth import Auth
 from models.user import User
-from typing import TypeVar, Tuple
-
-
-User = TypeVar('User')
 
 
 class BasicAuth(Auth):
-    """Basic Authentication. Task 6"""
+    """ Implement Basic Authorization protocol methods. Task 6
+    """
 
     def extract_base64_authorization_header(
-            self, authorization_header: str) -> str:
-        """Returns Base64 part of Authorization header. Task 7"""
-        if authorization_header and isinstance(
-                authorization_header,
-                str) and authorization_header.startswith("Basic "):
-            return authorization_header[6:]
+            self, authorization_header: str) -> Optional[str]:
+        """
+        Extracts the Base64 part of the Authorization header for a Basic
+        Authorization. Task 7
+        """
+        if authorization_header is None:
+            return None
+        if not isinstance(authorization_header, str):
+            return None
+        if not authorization_header.startswith("Basic "):
+            return None
+        token = authorization_header.split(" ")[-1]
+        return token
 
     def decode_base64_authorization_header(
-            self, base64_authorization_header: str) -> str:
-        """Returns decoded value of base64_authorization_header. Task 8"""
+            self, base64_authorization_header: str) -> Optional[str]:
+        """
+        Decode a Base64-encoded string. Task 8
+        """
         if base64_authorization_header is None:
             return None
         if not isinstance(base64_authorization_header, str):
             return None
-
         try:
-            return b64decode(base64_authorization_header).decode('utf-8')
+            decoded = base64_authorization_header.encode('utf-8')
+            decoded = base64.b64decode(decoded)
+            return decoded.decode('utf-8')
         except Exception:
             return None
 
     def extract_user_credentials(
-            self, decoded_base64_authorization_header: str) -> Tuple[str, str]:
-        """Returns user email and pswd from decoded Base64.Task 9 & 12(":")"""
+            self, decoded_base64_authorization_header: str
+    ) -> Tuple[Optional[str], Optional[str]]:
+        """
+        Returns user email and password from Base64
+        decoded value. Task 9 & 12(":")"
+        """
         if decoded_base64_authorization_header is None:
             return None, None
         if not isinstance(decoded_base64_authorization_header, str):
             return None, None
-        if ":" not in decoded_base64_authorization_header:
+        if ':' not in decoded_base64_authorization_header:
             return None, None
-        email, pwd = decoded_base64_authorization_header.split(':', 1)
-        return (email, pwd)
+        email, password = decoded_base64_authorization_header.split(":", 1)
+        return email, password
 
-    def user_object_from_credentials(self, user_email: str,
-                                     user_pwd: str) -> User:
+    def user_object_from_credentials(
+            self, user_email: str, user_pwd: str) -> Optional[User]:
         """
         Return a User instance based on email and password. Task 10
         """
@@ -56,10 +70,12 @@ class BasicAuth(Auth):
         if user_pwd is None or not isinstance(user_pwd, str):
             return None
         try:
-            user = User.search({'email': user_email})
+            users = User.search({"email": user_email})
+            if not users or users == []:
+                return None
+            for user in users:
+                if user.is_valid_password(user_pwd):
+                    return user
+            return None
         except Exception:
             return None
-        for u in user:
-            if u.is_valid_password(user_pwd):
-                return u
-        return None
