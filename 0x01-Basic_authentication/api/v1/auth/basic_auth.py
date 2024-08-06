@@ -64,7 +64,7 @@ class BasicAuth(Auth):
             return None
 
     def current_user(self, request=None) -> User:
-        """Overrides Auth and retrieves User instance for request."""
+        """Overrides Auth and retrieves User instance for request. Task 11"""
 
         # Retrieve auth header from the request.
         auth_header = self.authorization_header(request)
