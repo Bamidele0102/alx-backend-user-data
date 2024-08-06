@@ -15,7 +15,7 @@ class BasicAuth(Auth):
 
     def extract_base64_authorization_header(
             self, authorization_header: str) -> str:
-        """Returns Base64 part of Authorization header."""
+        """Returns Base64 part of Authorization header. Task 7"""
         if authorization_header and isinstance(
                 authorization_header,
                 str) and authorization_header.startswith("Basic "):
