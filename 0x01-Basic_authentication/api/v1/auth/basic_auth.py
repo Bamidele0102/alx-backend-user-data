@@ -79,3 +79,20 @@ class BasicAuth(Auth):
             return None
         except Exception:
             return None
+
+    def current_user(self, request=None) -> Optional[User]:
+        """
+        Returns a User instance based on a received request. Task 11
+        """
+        auth_header = self.authorization_header(request)
+        if auth_header:
+            token = self.extract_base64_authorization_header(auth_header)
+            if token:
+                decoded = self.decode_base64_authorization_header(token)
+                if decoded:
+                    email, password = self.extract_user_credentials(decoded)
+                    if email:
+                        return self.user_object_from_credentials(
+                            email, password
+                        )
+        return None
