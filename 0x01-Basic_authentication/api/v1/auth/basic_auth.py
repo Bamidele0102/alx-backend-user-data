@@ -11,7 +11,7 @@ User = TypeVar('User')
 
 
 class BasicAuth(Auth):
-    """Basic Authentication. Task 1"""
+    """Basic Authentication. Task 6"""
 
     def extract_base64_authorization_header(
             self, authorization_header: str) -> str:
