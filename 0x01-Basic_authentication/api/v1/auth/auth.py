@@ -11,7 +11,7 @@ class Auth:
     """Authentication Object. Task: 4"""
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """Checks if API routes require authentication."""
+        """Checks if API routes require authentication. Task 12('*')"""
         if path is None or not excluded_paths:
             return True
         for i in excluded_paths:
